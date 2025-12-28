@@ -1,0 +1,14 @@
+SERVICEPRO – MULTIPURPOSE SERVICE BUSINESS TEMPLATE
+Changelog
+
+--------------------------------------------------
+Version 1.0.0 – Initial Release
+--------------------------------------------------
+✔ Initial public release
+✔ Built with React 18 and Vite
+✔ Tailwind CSS responsive design
+✔ Framer Motion page animations
+✔ Home, Services, About, Projects, Contact pages
+✔ Centralized content configuration via siteData.js
+✔ Reusable and modular component structure
+✔ Production-ready frontend setup

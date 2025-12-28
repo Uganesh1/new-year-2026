@@ -1,0 +1,53 @@
+SERVICEPRO – MULTIPURPOSE SERVICE BUSINESS TEMPLATE
+Regular License Agreement
+
+Copyright © 2025
+All Rights Reserved
+
+This license grants you the right to use the ServicePro template under the following terms.
+
+--------------------------------------------------
+PERMITTED USE
+--------------------------------------------------
+✔ You may use this template for personal or commercial projects.
+✔ You may use this template to create a single end product for yourself or for one client.
+✔ You may modify the template to suit your project requirements.
+✔ You may deploy the final website for a client or personal business.
+
+--------------------------------------------------
+RESTRICTIONS
+--------------------------------------------------
+✖ You may NOT resell, redistribute, or sublicense this template.
+✖ You may NOT include this template in any product where it can be extracted or reused.
+✖ You may NOT sell this template as part of a theme bundle, generator, or website builder.
+✖ You may NOT claim ownership of the original source code.
+
+--------------------------------------------------
+NUMBER OF END PRODUCTS
+--------------------------------------------------
+Each license allows the creation of ONE (1) end product only.
+For multiple client projects, a separate license must be purchased for each project.
+
+--------------------------------------------------
+BACKEND & SUPPORT DISCLAIMER
+--------------------------------------------------
+This template is frontend-only and does not include any backend functionality.
+No warranty is provided for compatibility with third-party services or plugins.
+
+--------------------------------------------------
+WARRANTY
+--------------------------------------------------
+This template is provided "as is" without warranty of any kind, express or implied.
+The author shall not be liable for any damages arising from the use of this product.
+
+--------------------------------------------------
+OWNERSHIP
+--------------------------------------------------
+The original source code remains the property of the author.
+Purchasing this license does not transfer ownership of the source code.
+
+--------------------------------------------------
+CONTACT
+--------------------------------------------------
+For license-related questions:
+Email: support@yourdomain.com
