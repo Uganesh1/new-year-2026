@@ -1,318 +1,212 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import Fireworks from 'fireworks-js'
 
 const CircularSparkles = () => {
-  const [sparkles, setSparkles] = useState([])
-  const [pulsePhase, setPulsePhase] = useState(0)
+  const canvasRef = useRef(null)
+  const fireworksRef = useRef(null)
+  const containerRef = useRef(null)
 
   useEffect(() => {
-    // Create initial sparkles in a circle pattern with multiple layers
-    const initialSparkles = Array.from({ length: 40 }, (_, i) => {
-      const angle = (i * 9) * (Math.PI / 180) // Convert to radians
-      const radius = 200 + Math.random() * 30 // Main circle with variation
-      const speed = Math.random() * 0.03 + 0.01
-      const reverse = Math.random() > 0.5
-      const size = Math.random() * 3 + 2
-      
-      // Color palette with multiple colors
-      const colorPalette = [
-        '#60a5fa', // blue-400
-        '#3b82f6', // blue-500
-        '#8b5cf6', // violet-500
-        '#a855f7', // purple-500
-        '#ec4899', // pink-500
-        '#f472b6', // pink-400
-        '#fbbf24', // amber-400
-        '#f59e0b', // amber-500
-        '#10b981', // emerald-500
-        '#06b6d4', // cyan-500
-        '#6366f1', // indigo-500
-        '#d946ef', // fuchsia-500
-      ]
-      
-      return {
-        id: i,
-        angle: angle,
-        radius: radius,
-        baseRadius: radius,
-        size: size,
-        speed: speed * (reverse ? -1 : 1), // Some rotate opposite direction
-        delay: Math.random() * 3,
-        color: colorPalette[Math.floor(Math.random() * colorPalette.length)],
-        opacity: Math.random() * 0.8 + 0.2,
-        pulseSpeed: Math.random() * 0.02 + 0.01,
-        pulsePhase: Math.random() * Math.PI * 2,
-        trailLength: Math.floor(Math.random() * 3) + 1,
-        x: Math.cos(angle) * radius,
-        y: Math.sin(angle) * radius,
-        layer: Math.floor(Math.random() * 3), // Multiple layers for depth
+    if (!canvasRef.current || !containerRef.current) return
+
+    // Get container dimensions for proper positioning
+    const container = containerRef.current
+    const rect = container.getBoundingClientRect()
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const radius = Math.min(centerX, centerY) * 0.8 // 80% of the smaller dimension
+
+    // Create fireworks instance
+    const fireworks = new Fireworks(canvasRef.current, {
+      autoresize: false,
+      opacity: 0.9,
+      acceleration: 1.08,
+      friction: 0.95,
+      gravity: 0.3, // Lower gravity for circular spread
+      particles: 80, // Increased particles for better effect
+      traceLength: 2,
+      traceSpeed: 12,
+      explosion: 8, // More explosion particles
+      intensity: 45,
+      flickering: 60,
+      lineStyle: 'round',
+      hue: {
+        min: 0,
+        max: 360 // Full color spectrum
+      },
+      delay: {
+        min: 25,
+        max: 40 // Faster bursts
+      },
+      rocketsPoint: {
+        min: 50, // Start from center
+        max: 50
+      },
+      brightness: {
+        min: 60,
+        max: 90
+      },
+      decay: {
+        min: 0.01,
+        max: 0.025
+      },
+      mouse: {
+        click: false,
+        move: false,
+        max: 1
+      },
+      boundaries: {
+        x: 50,
+        y: 50,
+        width: rect.width,
+        height: rect.height,
+        visible: false
+      },
+      sound: {
+        enable: false
       }
     })
-    setSparkles(initialSparkles)
 
-    // Update sparkle positions for rotation with pulsing radius
-    let animationFrame
-    let lastTime = 0
-    
-    const updateSparkles = (time) => {
-      const delta = time - lastTime
-      lastTime = time
+    // Custom explosion pattern for circular effect
+    const originalCreateParticle = fireworks.createParticle
+    fireworks.createParticle = function(x, y, hue) {
+      // Convert coordinates to polar relative to center
+      const dx = x - centerX
+      const dy = y - centerY
+      const distance = Math.sqrt(dx * dx + dy * dy)
       
-      // Update pulse phase for radius animation
-      setPulsePhase(prev => (prev + 0.01) % (Math.PI * 2))
-      
-      setSparkles(prev => prev.map(sparkle => {
-        const newAngle = sparkle.angle + sparkle.speed * (delta / 16)
-        
-        // Pulsing radius effect
-        const radiusPulse = Math.sin(pulsePhase + sparkle.pulsePhase) * 20
-        const currentRadius = sparkle.baseRadius + radiusPulse
-        
-        const newX = Math.cos(newAngle) * currentRadius
-        const newY = Math.sin(newAngle) * currentRadius
-        
-        // Twinkling opacity effect
-        const opacityPulse = Math.sin(time * 0.001 + sparkle.id) * 0.3 + 0.7
-        const newOpacity = Math.max(0.2, Math.min(1, sparkle.opacity * opacityPulse))
-        
-        // Size pulse effect
-        const sizePulse = Math.sin(time * 0.002 + sparkle.id) * 0.5 + 1
-        const currentSize = sparkle.size * sizePulse
-
-        return {
-          ...sparkle,
-          angle: newAngle,
-          x: newX,
-          y: newY,
-          opacity: newOpacity,
-          currentSize: currentSize
-        }
-      }))
-      
-      animationFrame = requestAnimationFrame(updateSparkles)
+      // Only create particles within the circle radius
+      if (distance <= radius) {
+        return originalCreateParticle.call(this, x, y, hue)
+      }
+      return null
     }
 
-    // Start animation
-    setTimeout(() => {
-      lastTime = performance.now()
-      animationFrame = requestAnimationFrame(updateSparkles)
-    }, 500)
+    // Override the explosion to create circular patterns
+    const originalExplode = fireworks.explode
+    fireworks.explode = function(x, y, hue) {
+      const particles = 36 // Number of particles in circle
+      const explosionPower = 8
+      
+      for (let i = 0; i < particles; i++) {
+        const angle = (i * 360 / particles) * (Math.PI / 180)
+        const speed = 5 + Math.random() * 3
+        
+        // Calculate position within circle
+        const offsetX = Math.cos(angle) * radius * 0.8
+        const offsetY = Math.sin(angle) * radius * 0.8
+        
+        // Create particle at calculated position
+        const particleX = centerX + offsetX
+        const particleY = centerY + offsetY
+        
+        // Add velocity outward from center
+        const particle = originalCreateParticle.call(this, particleX, particleY, hue)
+        if (particle) {
+          particle.vx = Math.cos(angle) * speed
+          particle.vy = Math.sin(angle) * speed
+        }
+      }
+    }
+
+    fireworks.start()
+    fireworksRef.current = fireworks
+
+    // Add variety by changing colors periodically
+    const colorInterval = setInterval(() => {
+      if (fireworksRef.current) {
+        const hueMin = Math.floor(Math.random() * 360)
+        const hueMax = (hueMin + 120) % 360
+        fireworksRef.current.setOptions({
+          hue: { min: hueMin, max: hueMax },
+          intensity: 40 + Math.random() * 20
+        })
+      }
+    }, 3000)
 
     return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame)
+      clearInterval(colorInterval)
+      if (fireworksRef.current) {
+        fireworksRef.current.stop()
       }
     }
   }, [])
 
-  // Create additional sparkles for inner and outer circles
-  const innerSparkles = Array.from({ length: 20 }, (_, i) => {
-    const angle = Math.random() * Math.PI * 2
-    const radius = 120 + Math.random() * 40
-    const delay = Math.random() * 5
-    const size = Math.random() * 2 + 0.5
-    const color = ['#60a5fa', '#8b5cf6', '#f472b6', '#fbbf24'][Math.floor(Math.random() * 4)]
-    
-    return {
-      id: `inner-${i}`,
-      angle,
-      radius,
-      size,
-      color,
-      delay
-    }
-  })
-
-  const outerSparkles = Array.from({ length: 15 }, (_, i) => {
-    const angle = Math.random() * Math.PI * 2
-    const radius = 240 + Math.random() * 30
-    const delay = Math.random() * 5
-    const size = Math.random() * 1.5 + 0.5
-    const color = ['#3b82f6', '#a855f7', '#ec4899', '#10b981'][Math.floor(Math.random() * 4)]
-    
-    return {
-      id: `outer-${i}`,
-      angle,
-      radius,
-      size,
-      color,
-      delay
-    }
-  })
-
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      {/* Multiple animated rings */}
-      <div className="absolute w-[480px] h-[480px] border border-white/5 rounded-full animate-spin-slow"></div>
-      <div className="absolute w-[440px] h-[440px] border border-blue-400/10 rounded-full animate-spin-slow-reverse"></div>
-      <div className="absolute w-[520px] h-[520px] border border-purple-400/5 rounded-full animate-spin-slow" style={{animationDuration: '40s'}}></div>
+    <div ref={containerRef} className="relative w-full h-full">
+      {/* Canvas for fireworks */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{
+          clipPath: 'circle(50% at 50% 50%)', // Perfect circular clip
+          pointerEvents: 'none',
+          zIndex: 1
+        }}
+      />
       
-      {/* Glow rings */}
-      <div className="absolute w-[460px] h-[460px] bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-full animate-pulse-slow blur-xl"></div>
-      <div className="absolute w-[500px] h-[500px] bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-purple-500/5 rounded-full animate-pulse-slow-delay blur-2xl"></div>
+      {/* Decorative rings around the circle */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative">
+          {/* Outer ring */}
+          <div className="absolute w-96 h-96 border-2 border-blue-500/30 rounded-full animate-pulse"></div>
+          
+          {/* Middle ring */}
+          <div className="absolute w-80 h-80 border border-white/20 rounded-full animate-spin-slow"></div>
+          
+          {/* Inner ring */}
+          <div className="absolute w-64 h-64 border border-purple-500/30 rounded-full animate-spin-slow-reverse"></div>
+        </div>
+      </div>
       
-      {/* Main circular sparkle particles */}
-      {sparkles.map(sparkle => (
-        <div
-          key={sparkle.id}
-          className="absolute rounded-full transition-all duration-100"
-          style={{
-            left: `calc(50% + ${sparkle.x}px)`,
-            top: `calc(50% + ${sparkle.y}px)`,
-            width: `${sparkle.currentSize || sparkle.size}px`,
-            height: `${sparkle.currentSize || sparkle.size}px`,
-            backgroundColor: sparkle.color,
-            opacity: sparkle.opacity,
-            transform: `translate(-50%, -50%)`,
-            boxShadow: `
-              0 0 ${sparkle.currentSize * 4}px ${sparkle.currentSize * 2}px ${sparkle.color}80,
-              0 0 ${sparkle.currentSize * 6}px ${sparkle.currentSize * 3}px ${sparkle.color}40
-            `,
-            zIndex: sparkle.layer,
-            filter: `blur(${sparkle.layer * 0.5}px)`,
-          }}
-        />
-      ))}
+      {/* Center point indicator */}
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className="relative">
+          {/* Pulsing center dot */}
+          <div className="w-4 h-4 bg-white rounded-full animate-ping-slow"></div>
+          <div className="absolute inset-0 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+        </div>
+      </div>
       
-      {/* Inner circle sparkles - smaller, faster */}
-      {innerSparkles.map(sparkle => (
-        <div
-          key={sparkle.id}
-          className="absolute rounded-full animate-float-slow"
-          style={{
-            left: `calc(50% + ${Math.cos(sparkle.angle) * sparkle.radius}px)`,
-            top: `calc(50% + ${Math.sin(sparkle.angle) * sparkle.radius}px)`,
-            width: `${sparkle.size}px`,
-            height: `${sparkle.size}px`,
-            backgroundColor: sparkle.color,
-            transform: `translate(-50%, -50%)`,
-            animationDelay: `${sparkle.delay}s`,
-            boxShadow: `0 0 ${sparkle.size * 6}px ${sparkle.size * 2}px ${sparkle.color}`,
-          }}
-        />
-      ))}
-      
-      {/* Outer circle sparkles - larger, slower */}
-      {outerSparkles.map(sparkle => (
-        <div
-          key={sparkle.id}
-          className="absolute rounded-full animate-float-slow"
-          style={{
-            left: `calc(50% + ${Math.cos(sparkle.angle) * sparkle.radius}px)`,
-            top: `calc(50% + ${Math.sin(sparkle.angle) * sparkle.radius}px)`,
-            width: `${sparkle.size}px`,
-            height: `${sparkle.size}px`,
-            backgroundColor: sparkle.color,
-            transform: `translate(-50%, -50%)`,
-            animationDelay: `${sparkle.delay}s`,
-            animationDuration: '8s',
-            boxShadow: `0 0 ${sparkle.size * 8}px ${sparkle.size * 3}px ${sparkle.color}60`,
-          }}
-        />
-      ))}
-      
-      {/* Shooting sparkles that move across the circle */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const startAngle = Math.random() * Math.PI * 2
-        const endAngle = startAngle + Math.PI * (Math.random() * 0.5 + 0.5)
-        const radius = 180 + Math.random() * 40
-        const duration = 2 + Math.random() * 2
-        const delay = Math.random() * 3
-        const color = ['#60a5fa', '#8b5cf6', '#f472b6'][Math.floor(Math.random() * 3)]
+      {/* Radial lines for visual reference */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const angle = (i * 30) * (Math.PI / 180)
+        const length = 180
         
         return (
           <div
-            key={`shoot-${i}`}
-            className="absolute rounded-full animate-shoot"
+            key={i}
+            className="absolute left-1/2 top-1/2 w-px h-24 bg-gradient-to-b from-transparent via-blue-500/20 to-transparent"
             style={{
-              left: '50%',
-              top: '50%',
-              width: '2px',
-              height: '2px',
-              backgroundColor: color,
+              transform: `translate(-50%, -50%) rotate(${angle}rad) translateY(-${length/2}px)`,
               transformOrigin: 'center',
-              transform: `translate(-50%, -50%) rotate(${startAngle}rad)`,
-              animation: `shoot ${duration}s linear infinite`,
-              animationDelay: `${delay}s`,
-              boxShadow: `0 0 10px 2px ${color}`,
-            }}
-          >
-            <style>{`
-              @keyframes shoot-${i} {
-                0% {
-                  transform: translate(-50%, -50%) rotate(${startAngle}rad) translateX(${radius}px);
-                  opacity: 0;
-                }
-                10% {
-                  opacity: 1;
-                }
-                90% {
-                  opacity: 1;
-                }
-                100% {
-                  transform: translate(-50%, -50%) rotate(${endAngle}rad) translateX(${radius}px);
-                  opacity: 0;
-                }
-              }
-            `}</style>
-          </div>
-        )
-      })}
-      
-      {/* Burst sparkles that appear randomly */}
-      {Array.from({ length: 6 }).map((_, i) => {
-        const angle = Math.random() * Math.PI * 2
-        const radius = 150 + Math.random() * 60
-        const delay = Math.random() * 4
-        const color = ['#fbbf24', '#06b6d4', '#ec4899'][Math.floor(Math.random() * 3)]
-        
-        return (
-          <div
-            key={`burst-${i}`}
-            className="absolute rounded-full animate-burst"
-            style={{
-              left: `calc(50% + ${Math.cos(angle) * radius}px)`,
-              top: `calc(50% + ${Math.sin(angle) * radius}px)`,
-              width: '0px',
-              height: '0px',
-              backgroundColor: color,
-              transform: 'translate(-50%, -50%)',
-              animationDelay: `${delay}s`,
-              boxShadow: `0 0 20px 5px ${color}`,
+              opacity: 0.3,
             }}
           />
         )
       })}
       
-      {/* Connection lines between sparkles (dotted) */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const angle1 = (i * 30) * (Math.PI / 180)
-        const angle2 = ((i + 6) * 30) * (Math.PI / 180)
-        const radius = 220
+      {/* Static sparkles on the ring */}
+      {Array.from({ length: 24 }).map((_, i) => {
+        const angle = (i * 15) * (Math.PI / 180)
+        const distance = 180
+        const x = Math.cos(angle) * distance
+        const y = Math.sin(angle) * distance
+        const size = 1 + Math.random() * 2
+        const color = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'][Math.floor(Math.random() * 4)]
         
         return (
           <div
-            key={`line-${i}`}
-            className="absolute w-px h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent"
+            key={i}
+            className="absolute rounded-full"
             style={{
-              left: `calc(50% + ${Math.cos(angle1) * radius}px)`,
-              top: `calc(50% + ${Math.sin(angle1) * radius}px)`,
-              width: '100px',
-              transform: `
-                translate(-50%, -50%) 
-                rotate(${Math.atan2(
-                  Math.sin(angle2) * radius - Math.sin(angle1) * radius,
-                  Math.cos(angle2) * radius - Math.cos(angle1) * radius
-                )}rad)
-              `,
-              transformOrigin: '0 0',
-              opacity: 0.3,
-              backgroundImage: `linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(96, 165, 250, 0.3) 20%, 
-                rgba(96, 165, 250, 0.6) 50%, 
-                rgba(96, 165, 250, 0.3) 80%, 
-                transparent 100%
-              )`,
+              left: `calc(50% + ${x}px)`,
+              top: `calc(50% + ${y}px)`,
+              width: `${size}px`,
+              height: `${size}px`,
+              backgroundColor: color,
+              transform: 'translate(-50%, -50%)',
+              boxShadow: `0 0 ${size * 2}px ${color}`,
             }}
           />
         )
