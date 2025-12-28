@@ -102,3 +102,470 @@
   scrollbar-width: none;
 }
 
+/* Side Fire Works */
+/* Side fireworks animations */
+@keyframes float-particle {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.5;
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(0) translateX(20px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(20px) translateX(10px);
+    opacity: 0.8;
+  }
+}
+
+/* Ensure canvas fits properly */
+canvas {
+  display: block;
+}
+
+/* Gradient overlay transitions */
+.gradient-overlay {
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Message section */
+/* Assembly animations */
+@keyframes horizontal-line-expand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 80%;
+    opacity: 0.3;
+  }
+}
+
+@keyframes vertical-line-expand {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: 80%;
+    opacity: 0.3;
+  }
+}
+
+@keyframes path-top {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes path-right {
+  0% {
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes path-bottom {
+  0% {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes path-left {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes impact-glow {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.8);
+    filter: blur(20px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+    filter: blur(30px);
+  }
+}
+
+@keyframes direction-arrow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) translateX(5px);
+  }
+}
+
+@keyframes trail-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes assembly-pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border: 2px solid rgba(59, 130, 246, 0);
+  }
+}
+
+@keyframes assembly-pulse-delay {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.6;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+    border: 2px solid rgba(139, 92, 246, 0);
+  }
+}
+
+@keyframes completion-particle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes final-text-reveal {
+  0% {
+    opacity: 0;
+    letter-spacing: 2px;
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: normal;
+  }
+}
+
+@keyframes final-line-expand {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebration-pop {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Animation utilities */
+.animate-horizontal-line-expand {
+  animation: horizontal-line-expand 1s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.animate-vertical-line-expand {
+  animation: vertical-line-expand 1s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.animate-path-top {
+  animation: path-top 1s ease-out forwards;
+}
+
+.animate-path-right {
+  animation: path-right 1s ease-out forwards;
+}
+
+.animate-path-bottom {
+  animation: path-bottom 1s ease-out forwards;
+}
+
+.animate-path-left {
+  animation: path-left 1s ease-out forwards;
+}
+
+.animate-impact-glow {
+  animation: impact-glow 0.8s ease-out forwards;
+}
+
+.animate-direction-arrow {
+  animation: direction-arrow 1s ease-in-out infinite;
+}
+
+.animate-assembly-pulse {
+  animation: assembly-pulse 2s ease-out infinite;
+}
+
+.animate-assembly-pulse-delay {
+  animation: assembly-pulse-delay 2s ease-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-completion-particle {
+  animation: completion-particle 1.5s ease-out forwards;
+}
+
+.animate-final-text-reveal {
+  animation: final-text-reveal 1s ease-out forwards;
+}
+
+.animate-final-line-expand {
+  animation: final-line-expand 1.5s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.animate-celebration-pop {
+  animation: celebration-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+/* Countdown */
+/* Countdown-specific animations */
+@keyframes countdown-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-180deg);
+  }
+  70% {
+    transform: scale(1.1) rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes countdown-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  30% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(180deg);
+  }
+}
+
+@keyframes countdown-final {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2) rotate(45deg);
+    filter: blur(20px);
+  }
+}
+
+@keyframes slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes trail-exit {
+  0% {
+    opacity: 0.5;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px);
+  }
+}
+
+@keyframes float-around {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+    box-shadow: 0 0 15px currentColor;
+  }
+}
+
+@keyframes typing-countdown {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes expand-delay {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulse-slow-delay {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Animation utilities */
+.animate-countdown-enter {
+  animation: countdown-enter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-countdown-exit {
+  animation: countdown-exit 0.4s ease-in forwards;
+}
+
+.animate-countdown-final {
+  animation: countdown-final 0.8s ease-out forwards;
+}
+
+.animate-slide-in-down {
+  animation: slide-in-down 1s ease-out forwards;
+}
+
+.animate-trail-exit {
+  animation: trail-exit 0.5s ease-out forwards;
+}
+
+.animate-float-around {
+  animation: float-around 2s ease-in-out infinite;
+}
+
+.animate-typing-countdown {
+  animation: typing-countdown 1s steps(20, end) forwards;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.animate-expand-delay {
+  animation: expand-delay 2s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-pulse-slow-delay {
+  animation: pulse-slow-delay 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 25s linear infinite;
+}
