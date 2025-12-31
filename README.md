@@ -1,4 +1,4 @@
-# 🎆 New Year Countdown & Celebration App 🎉
+# 🎆 2026 New Year Countdown & Celebration App 🎉
 
 A modern, animated **New Year Countdown web application** built using **React** and **Tailwind CSS**.  
 The app smoothly transitions from a live countdown to a festive New Year celebration with fireworks, starfield effects, and a greeting message.
